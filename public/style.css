@@ -1,0 +1,13 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+nav {
+    margin-top: 20px;
+}
+
+a {
+    text-decoration: none;
+    margin: 0 10px;
+}
