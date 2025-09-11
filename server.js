@@ -24,14 +24,14 @@ app.get('/blog', (req,res) => {
     res.sendFile(path.join(__dirname, 'views', 'blog.html'))
 });
 
-app.get('api/posts'm (req, res) => {
-    fs.readFile(path.join(__dirname, 'data', 'posts.json'), 'utf8', (err, data => {
+app.get('/api/posts', (req, res) => {
+    fs.readFile(path.join(__dirname, 'data', 'posts.json'), 'utf8', (err, data) => {
         if (err) {
             console.error(err);
             return res.status(500).send('Error reading blog posts');
         }
-        res.json(JSON.rarse(data));
-    }));
+        res.json(JSON.parse(data));
+    });
 });
 
 app.listen(PORT, () => {
