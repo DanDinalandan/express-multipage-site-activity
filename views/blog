@@ -24,13 +24,13 @@
                     const posts = await response.json();
                     const container = document.getElementById('blog-posts-container')
 
-                    if (posts && post.length > 0) {
+                    if (posts && posts.length > 0) {
                         posts.forEach(post => {
                             const postElement = document.createElement('div');
                             postElement.classList.add('blog-post');
                             postElement.innerHTML = `
-                            <h2>${post.title}</h2>
-                            <p>${post.content}</p>
+                                <h2>${post.title}</h2>
+                                <p>${post.content}</p>
                             `;
                             container.appendChild(postElement);
                         });
