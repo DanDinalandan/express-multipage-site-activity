@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <title>Home</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <h1>Blog YAAAAAAAAAAAAS</h1>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/about">About</a> |
+            <a href="/contact">Contact</a> |
+            <a href="/blog">Blog</a>
+        </nav>
+
+        <main id="blog-posts-container"></main>
+
+        <script>
+            async function fetchBlogPosts() {
+                try {
+                    const response = await fetch('/api/posts');
+                    const posts = await response.json();
+                    const container = document.getElementById('blog-posts-container')
+
+                    if (posts && post.length > 0) {
+                        posts.forEach(post => {
+                            const postElement = document.createElement('div');
+                            postElement.classList.add('blog-post');
+                            postElement.innerHTML = `
+                            <h2>${post.title}</h2>
+                            <p>${post.content}</p>
+                            `;
+                            container.appendChild(postElement);
+                        });
+                    } else {
+                        container.innerHTML = '<p>No blog posts to display yet. Check back soon!</p>';
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch blog posts:', error);
+                        const container = document.getElementById('blog-posts-container');
+                        container.innerHTML = '<p>No blog posts to display yet. Please try again later.</p>';
+                        }
+                }
+
+            document.addEventListener('DOMContentLoaded', fetchBlogPosts);
+        </script>
+
+    </body>
+</html>

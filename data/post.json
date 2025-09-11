@@ -1,0 +1,5 @@
+[
+    {"title": "First Post", "content": "This is my first blog post. It's great to be able to share my thoughts with you all."},
+    {"title": "Second Post", "content": "This is another blog post, where I'll discuss some more interesting topics."},
+    {"title": "Third Post: Dynamic Loading", "content": "This post demonstrates how we can dynamically load content from a JSON file using JavaScript."}
+]
