@@ -37,3 +37,21 @@ app.get('/api/posts', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:$(PORT)`);
 });
+
+
+/// NAV BAR 
+function handleSmallScreens() {
+  document.querySelector('.navbar-toggler')
+    .addEventListener('click', () => {
+      let navbarMenu = document.querySelector('.navbar-menu')
+
+      if (!navbarMenu.classList.contains('active')) {
+        navbarMenu.classList.add('active')
+      } else {
+        navbarMenu.classList.remove('active')
+      }
+    })
+}
+
+handleSmallScreens()
+            
