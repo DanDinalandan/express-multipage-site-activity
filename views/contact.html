@@ -36,5 +36,22 @@
         <section id="home" class="sec-contact">
             <h1 class="main-heading text-shadow">This is Contact</h1>
         </section>
+        
+        <script>
+            function handleSmallScreens() {
+            document.querySelector('.navbar-toggler')
+                .addEventListener('click', () => {
+                let navbarMenu = document.querySelector('.navbar-menu');
+
+                if (!navbarMenu.classList.contains('active')) {
+                    navbarMenu.classList.add('active');
+                } else {
+                    navbarMenu.classList.remove('active');
+                }
+                });
+            }
+
+            handleSmallScreens();
+        </script>
     </body>
 </html>
