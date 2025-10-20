@@ -33,11 +33,25 @@
             </div>
         </nav>
 
-        <section id="home" class="sec-contact">
+        <section id="blog" class="sec-blog">
         <div class="container">
-            <h1 class="main-heading text-shadow">This is Blog</h1>
-            <br><br>
-            <main id="blog-posts-container"></main>
+            <h1 class="main-heading text-shadow">This Is Blog</h1>
+            <br>
+            <section class="blog-form-section">
+                <form id="newPostForm" class="blog-form" autocomplete="off">
+                    <input type="text" id="postTitle" name="title" placeholder="Post title" required>
+                    <textarea id="postContent" name="content" placeholder="Write your post..." rows="4" required></textarea>
+                    <button type="submit" class="submit-btn">Publish</button>
+                    <div id="postFormStatus" class="form-status"></div>
+                </form>
+            </section>
+            <br>
+            <main id="blog-posts-container">
+                <div class="loading-container">
+                    <div class="loading"></div>
+                    <p>Loading blog posts...</p>
+                </div>
+            </main>
         </div>
         </section>
 
@@ -58,32 +72,89 @@
             handleSmallScreens();
 
             async function fetchBlogPosts() {
+                const container = document.getElementById('blog-posts-container');
+                
                 try {
                     const response = await fetch('/api/posts');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
                     const posts = await response.json();
-                    const container = document.getElementById('blog-posts-container')
 
                     if (posts && posts.length > 0) {
-                        posts.forEach(post => {
+                        container.innerHTML = '';
+                        
+                        posts.forEach((post, index) => {
                             const postElement = document.createElement('div');
                             postElement.classList.add('blog-post');
                             postElement.innerHTML = `
-                                <h2>${post.title}</h2>
+                                <div class="post-header">
+                                    <h2>${post.title}</h2>
+                                    <span class="post-id">Post #${post.id}</span>
+                                </div>
                                 <p>${post.content}</p>
+                                <div class="post-footer">
+                                    <span class="author">By User ${post.userId}</span>
+                                    <span class="read-more">Read More</span>
+                                </div>
                             `;
                             container.appendChild(postElement);
                         });
                     } else {
-                        container.innerHTML = '<p>No blog posts to display yet. Check back soon!</p>';
-                        }
-                    } catch (error) {
-                        console.error('Failed to fetch blog posts:', error);
-                        const container = document.getElementById('blog-posts-container');
-                        container.innerHTML = '<p>No blog posts to display yet. Please try again later.</p>';
-                        }
+                        container.innerHTML = '<div class="no-posts"><p>No blog posts to display yet. Check back soon!</p></div>';
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch blog posts:', error);
+                    container.innerHTML = '<div class="error-message"><p>Sorry, we couldn\'t load the blog posts. Please try again later.</p></div>';
                 }
+            }
 
-            document.addEventListener('DOMContentLoaded', fetchBlogPosts);
+            document.addEventListener('DOMContentLoaded', () => {
+                fetchBlogPosts();
+
+                const form = document.getElementById('newPostForm');
+                const statusEl = document.getElementById('postFormStatus');
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    statusEl.textContent = '';
+
+                    const title = document.getElementById('postTitle').value.trim();
+                    const content = document.getElementById('postContent').value.trim();
+
+                    if (!title || !content) {
+                        statusEl.innerHTML = '<div class="error-message">Please provide both title and content.</div>';
+                        return;
+                    }
+
+                    const btn = form.querySelector('.submit-btn');
+                    const original = btn.textContent;
+                    btn.textContent = 'Publishing...';
+                    btn.disabled = true;
+                    try {
+                        const res = await fetch('/api/posts', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ title, content })
+                        });
+                        if (!res.ok) {
+                            let errMsg = 'Failed to publish';
+                            try { const body = await res.json(); if (body && body.error) errMsg = body.error; } catch(_) {}
+                            throw new Error(errMsg);
+                        }
+                        statusEl.innerHTML = '<div class="success-message">Post published!</div>';
+                        form.reset();
+                        // Refresh list without leaving the page
+                        await fetchBlogPosts();
+                    } catch (err) {
+                        statusEl.innerHTML = '<div class="error-message">' + (err && err.message ? err.message : 'Could not publish the post. Try again.') + '</div>';
+                    } finally {
+                        btn.textContent = original;
+                        btn.disabled = false;
+                    }
+                });
+            });
         </script>
 
     </body>

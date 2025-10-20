@@ -33,8 +33,31 @@
             </div>
         </nav>
 
-        <section id="home" class="sec-contact">
-            <h1 class="main-heading text-shadow">This is Contact</h1>
+        <section id="contact" class="sec-contact">
+            <div class="container">
+                <h1 class="main-heading text-shadow">Contact</h1>
+                <div class="contact-form-minimal">
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                            <span class="error-message" id="nameError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Your Message" rows="4" required></textarea>
+                            <span class="error-message" id="messageError"></span>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">Send</button>
+                        <div id="formStatus" class="form-status"></div>
+                    </form>
+                </div>
+            </div>
         </section>
         
         <script>
@@ -52,6 +75,98 @@
             }
 
             handleSmallScreens();
+
+            // Form validation and submission
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('contactForm');
+                const formStatus = document.getElementById('formStatus');
+
+                // Clear error messages
+                function clearErrors() {
+                    const errorMessages = document.querySelectorAll('.error-message');
+                    errorMessages.forEach(error => error.textContent = '');
+                }
+
+                // Show error message
+                function showError(fieldId, message) {
+                    const errorElement = document.getElementById(fieldId + 'Error');
+                    if (errorElement) {
+                        errorElement.textContent = message;
+                    }
+                }
+
+                // Validate form
+                function validateForm(formData) {
+                    let isValid = true;
+                    clearErrors();
+
+                    // Validate name
+                    if (!formData.get('name') || formData.get('name').trim().length < 2) {
+                        showError('name', 'Name must be at least 2 characters long');
+                        isValid = false;
+                    }
+
+                    // Validate email
+                    const email = formData.get('email');
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!email || !emailRegex.test(email)) {
+                        showError('email', 'Please enter a valid email address');
+                        isValid = false;
+                    }
+
+                    // Validate message
+                    if (!formData.get('message') || formData.get('message').trim().length < 10) {
+                        showError('message', 'Message must be at least 10 characters long');
+                        isValid = false;
+                    }
+
+                    return isValid;
+                }
+
+                // Handle form submission
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    
+                    if (!validateForm(formData)) {
+                        return;
+                    }
+
+                    // Show loading state
+                    const submitBtn = form.querySelector('.submit-btn');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.disabled = true;
+
+                    try {
+                        const response = await fetch('/api/contact', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                name: formData.get('name'),
+                                email: formData.get('email'),
+                                subject: formData.get('subject'),
+                                message: formData.get('message')
+                            })
+                        });
+
+                        if (response.ok) {
+                            formStatus.innerHTML = '<div class="success-message">Thank you! Your message has been sent successfully.</div>';
+                            form.reset();
+                        } else {
+                            throw new Error('Failed to send message');
+                        }
+                    } catch (error) {
+                        formStatus.innerHTML = '<div class="error-message">Sorry, there was an error sending your message. Please try again.</div>';
+                    } finally {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            });
         </script>
     </body>
 </html>

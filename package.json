@@ -1,12 +1,14 @@
 {
   "name": "express-multipage-site",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A modern multipage website built with Express.js featuring a contact form, dynamic blog with API integration, and responsive design",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["express", "nodejs", "website", "blog", "contact-form", "api"],
   "author": "",
   "license": "ISC",
   "dependencies": {
